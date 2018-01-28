@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class _2_PermutationToEachOther {
+public class _1_2_PermutationToEachOther {
 
 	public static void main(String[] args) {
 		String str1 = "abc";
 		String str2 = "bca1";
 
-		//System.out.println("Result:" + permutationToEachOther(str1, str2));
+		// System.out.println("Result:" + permutationToEachOther(str1, str2));
 
 		System.out.println("Result:" + permutationToEachOtherSort(str1, str2));
 
@@ -56,7 +56,7 @@ public class _2_PermutationToEachOther {
 		return new String(content);
 	}
 
-	// Complexity - O(n log n)
+	// Complexity - O(n) & space n
 	private static boolean permutationToEachOtherBit(String str1, String str2) {
 		if (str1.length() != str2.length()) {
 			return false;

@@ -2,7 +2,7 @@ package strings_arrays;
 
 import java.util.Arrays;
 
-public class _1_FindUniqueString {
+public class _1_1_FindUniqueString {
 
 	public static void main(String[] args) {
 
