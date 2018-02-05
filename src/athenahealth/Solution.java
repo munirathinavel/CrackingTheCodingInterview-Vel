@@ -1,8 +1,8 @@
-package hackerrank;
+package athenahealth;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -20,8 +20,8 @@ import java.util.Set;
  *         2 
  *         8 5 
  *         1 10 
- *         4 
- *         9 9 
+ *         4  
+ *         9 9
  *         3 3 
  *         6 6 
  *         2 2
@@ -42,7 +42,7 @@ public class Solution {
 		}
 		List<String> trueCells = null;
 		List<List<String>> testCases = new ArrayList<List<String>>();
-		Set<Integer> diagonals = new HashSet<>();
+		List<Integer> diagonals = new ArrayList<>();
 		int N = 0;
 
 		for (int i = 0; i < T; i++) {
@@ -55,9 +55,13 @@ public class Solution {
 			for (int j = 0; j < N; j++) {
 				// Reading the co-ordinates
 				String str = scanner.nextLine().trim();
-				if (Integer.parseInt(str.split(" ")[0]) > 0 && Integer.parseInt(str.split(" ")[0]) <= 1000000
-						&& Integer.parseInt(str.split(" ")[1]) > 0 && Integer.parseInt(str.split(" ")[1]) <= 1000000)
+				int value1 = Integer.parseInt(str.split(" ")[0]);
+				int value2 = Integer.parseInt(str.split(" ")[1]);
+				if (value1 > 0 && value1 <= 1000000 && value2 > 0 && value1 <= 1000000) {
 					trueCells.add(str);
+				} else {
+					throw new RuntimeException("Input out of Range");
+				}
 			}
 			testCases.add(trueCells);
 		}
@@ -70,23 +74,23 @@ public class Solution {
 
 			// Iterating through test case inputs
 			for (int k = 0; k < testcase.size() && interDiagonals.size() <= testcase.size(); k++) {
-				for (int l = 0; l < testcase.size() && interDiagonals.size() <= testcase.size(); l++) {
-					if (!testcase.get(k).equals(testcase.get(l))) {
+				for (int l = k + 1; l < testcase.size() && interDiagonals.size() <= testcase.size(); l++) {
 
-						int i = Integer.parseInt(testcase.get(k).split(" ")[0]);
-						int j = Integer.parseInt(testcase.get(k).split(" ")[1]);
+					int i = Integer.parseInt(testcase.get(k).split(" ")[0]);
+					int j = Integer.parseInt(testcase.get(k).split(" ")[1]);
 
-						int p = Integer.parseInt(testcase.get(l).split(" ")[0]);
-						int q = Integer.parseInt(testcase.get(l).split(" ")[1]);
+					int p = Integer.parseInt(testcase.get(l).split(" ")[0]);
+					int q = Integer.parseInt(testcase.get(l).split(" ")[1]);
 
-						if (Math.abs(p - i) == Math.abs(q - j)) {
-							interDiagonals.put(i, j);
-							interDiagonals.put(p, q);
-						}
+					if (Math.abs(p - i) == Math.abs(q - j)) {
+						interDiagonals.put(i, j);
+						interDiagonals.put(p, q);
 					}
+
 				}
 			}
-			if (interDiagonals.size() >= 2) {
+
+			if (interDiagonals != null && interDiagonals.size() >= 2) {
 				diagonals.add(interDiagonals.size());
 			} else {
 				diagonals.add(0);
@@ -94,7 +98,9 @@ public class Solution {
 		}
 		// Printing the diagonals
 		for (Integer i : diagonals) {
-			System.out.println(i);
+			if (i != null) {
+				System.out.println(i);
+			}
 		}
 
 	}
