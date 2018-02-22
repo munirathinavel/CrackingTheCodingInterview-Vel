@@ -1,107 +1,139 @@
 package athenahealth;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
 
-/**
- * This is program is used to determine the total number of pairs which present
- * in the diagonal.
- * 
- * @author munirathinavel
- *
- *         Sample Input:
- *
- *         2 
- *         2 
- *         8 5 
- *         1 10 
- *         4  
- *         9 9
- *         3 3 
- *         6 6 
- *         2 2
- * 
- *         Output
- *
- *         0 4
- */
 public class Solution {
 	public static void main(String args[]) throws Exception {
-		/* Enter your code here. Read input from STDIN. Print output to STDOUT */
-		Scanner scanner = new Scanner(System.in);
+		Scanner sc = new Scanner(System.in);
 
-		// Reading No. of Test Cases 'T'
-		int T = Integer.parseInt(scanner.nextLine().trim());
-		if (T > 10 && T < 1) {
-			throw new RuntimeException("Input out of Range");
-		}
-		List<String> trueCells = null;
-		List<List<String>> testCases = new ArrayList<List<String>>();
-		List<Integer> diagonals = new ArrayList<>();
-		int N = 0;
+		String s = sc.next();
+		sc.close();
 
-		for (int i = 0; i < T; i++) {
-			trueCells = new ArrayList<String>();
-			// Reading the no. of True Cells (Co-ordinates)
-			N = Integer.parseInt(scanner.nextLine().trim());
-			if (N > 100000 && N < 1) {
-				throw new RuntimeException("Input out of Range");
+		Set<String> combinations = new HashSet<String>();
+		int n = s.length();
+		int open = 0;
+		int close = 0;
+		for (int i = 0; i < n; i++) {
+			if ('(' == s.charAt(i)) {
+				open++;
+			} else if (')' == s.charAt(i)) {
+				close++;
 			}
-			for (int j = 0; j < N; j++) {
-				// Reading the co-ordinates
-				String str = scanner.nextLine().trim();
-				int value1 = Integer.parseInt(str.split(" ")[0]);
-				int value2 = Integer.parseInt(str.split(" ")[1]);
-				if (value1 > 0 && value1 <= 1000000 && value2 > 0 && value1 <= 1000000) {
-					trueCells.add(str);
-				} else {
-					throw new RuntimeException("Input out of Range");
+		}
+
+		StringBuffer sb = new StringBuffer();
+		int deleteOpen = 0;
+		int deleteClose = 0;
+		int openAdded = 0;
+		int closeAdded = 0;
+		int left = 0;
+		if (open > close) {
+			for (int i = 0; i < n - 1; i++) {
+				sb = new StringBuffer();
+				deleteOpen = 0;
+				left = 0;
+				openAdded = 0;
+				closeAdded = 0;
+				for (int j = 0; j < n ; j++) {
+					if (s.charAt(j) == '(' && left >= i) {
+						if (deleteOpen == (open - close)) {
+							sb.append(s.charAt(j));
+							openAdded++;
+						} else {
+							deleteOpen++;
+						}
+					} else {
+						if ('(' == s.charAt(j)) {
+							openAdded++;
+						} else if (')' == s.charAt(j)) {
+							closeAdded++;
+						}
+						sb.append(s.charAt(j));
+					}
+					left++;
 				}
-			}
-			testCases.add(trueCells);
-		}
-		scanner.close();
-
-		// Finding Diagonals
-		// Iterating through number of test cases.
-		for (List<String> testcase : testCases) {
-			Map<Integer, Integer> interDiagonals = new HashMap<>();
-
-			// Iterating through test case inputs
-			for (int k = 0; k < testcase.size() && interDiagonals.size() <= testcase.size(); k++) {
-				for (int l = k + 1; l < testcase.size() && interDiagonals.size() <= testcase.size(); l++) {
-
-					int i = Integer.parseInt(testcase.get(k).split(" ")[0]);
-					int j = Integer.parseInt(testcase.get(k).split(" ")[1]);
-
-					int p = Integer.parseInt(testcase.get(l).split(" ")[0]);
-					int q = Integer.parseInt(testcase.get(l).split(" ")[1]);
-
-					if (Math.abs(p - i) == Math.abs(q - j)) {
-						interDiagonals.put(i, j);
-						interDiagonals.put(p, q);
+				if (openAdded == closeAdded && deleteOpen == (open - close)) {
+					String str = sb.toString();
+					if (checkBalancedParentheses(str)) {
+						combinations.add(str);
 					}
 
 				}
 			}
+		} else if (close > open) {
 
-			if (interDiagonals != null && interDiagonals.size() >= 2) {
-				diagonals.add(interDiagonals.size());
-			} else {
-				diagonals.add(0);
+			for (int i = 0; i < n - 1; i++) {
+				sb = new StringBuffer();
+				deleteClose = 0;
+				left = 0;
+				openAdded = 0;
+				closeAdded = 0;
+				for (int j = n - 1; j >= 0; j--) {
+
+					if (s.charAt(j) == ')' && left >= i) {
+						if (deleteClose == (close - open)) {
+							closeAdded++;
+							sb.append(s.charAt(j));
+						} else {
+							deleteClose++;
+						}
+					} else {
+						if ('(' == s.charAt(j)) {
+							openAdded++;
+						} else if (')' == s.charAt(j)) {
+							closeAdded++;
+						}
+						sb.append(s.charAt(j));
+					}
+					left++;
+				}
+				if (openAdded == closeAdded && deleteClose == (close - open)) {
+					String str = sb.reverse().toString();
+					if (checkBalancedParentheses(str)) {
+						combinations.add(str);
+					}
+				}
 			}
 		}
-		// Printing the diagonals
-		for (Integer i : diagonals) {
-			if (i != null) {
-				System.out.println(i);
+
+		for (String combination : combinations) {
+			System.out.println(combination);
+		}
+	}
+
+	private static boolean checkBalancedParentheses(String input) {
+		Stack<String> stack = new Stack<String>();
+		boolean isBalanaced = false;
+
+		for (int i = 0; i < input.length(); i++) {
+			String str = "" + input.charAt(i); // store characters as String
+
+			// if opening bracket then push into stack
+			if (str.equals("(")) {
+				stack.push(str);
+			}
+
+			// if closing bracket, pop bracket and compare if its a pair
+			if (str.equals(")")) {
+				// if stack becomes empty in between then also its not balanced
+				if (stack.isEmpty()) {
+					return false;
+				}
+				String opening = stack.peek();
+				if (str.equals(")") && opening.equals("(")) {
+					stack.pop();
+				}
 			}
 		}
+		// if stack is empty at end, then its balanced
+		if (input.length() > 0 && stack.isEmpty()) {
+			isBalanaced = true;
+		}
 
+		return isBalanaced;
 	}
 }
